@@ -220,8 +220,8 @@ def search(aut) :
 #    for l in list_of_auth_temp :
 #        list_of_auth.append(l.split(';')[0])
 
-list_of_galleries = open("data/galleries_cleaned_no_webtoon_no_incomplete.csv").readlines()[:6]
-list_of_auth_temp = open("data/auth_num.csv").readlines()[:7]
+list_of_galleries = open("data/galleries_cleaned_no_webtoon_no_incomplete.csv").readlines()#[:6]
+list_of_auth_temp = open("data/auth_num.csv").readlines()#[:7]
 list_of_auth = []
 for l in list_of_auth_temp :
     list_of_auth.append(l.split(';')[0])
