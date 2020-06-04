@@ -232,17 +232,19 @@ def search(aut) :
 gal_class = dict()
 auth_class = dict()
 print("Importing galleries...")
-with open("data/galleries_cleaned_no_webtoon_no_incomplete.csv",'r') as in_gal :
+in_gal=open("data/galleries_cleaned_no_webtoon_no_incomplete.csv",'r')
+g = in_gal.readline()
+while g :
+    gal_class[g.split(';')[0]] = Gallery(g)
     g = in_gal.readline()
-    while g :
-        gal_class[g.split(';')[0]] = Gallery(g)
-        g = in_gal.readline()
+in_gal.close()
 print("Reading authors...")
-with open("data/auth_num.csv",'r') as in_aut :
+in_aut=open("data/auth_num.csv",'r')
+a = in_aut.readline()
+while a :
+    auth_class[a.split(';')[0]] = Auth(a)
     a = in_aut.readline()
-    while a :
-        gal_class[a.split(';')[0]] = Auth(a)
-        g = in_gal.readline()
+in_aut.close()
 print("Drawing lines...")
 for gal in gal_class.values() :
     for auteur in gal.auth :
