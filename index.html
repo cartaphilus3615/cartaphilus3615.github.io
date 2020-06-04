@@ -217,12 +217,19 @@ def search(aut) :
 #    for l in list_of_auth_temp :
 #        list_of_auth.append(l.split(';')[0])
 
-list_of_galleries = open("data/galleries_cleaned_no_webtoon_no_incomplete.csv").readlines()[:11]
-list_of_auth_temp = open("data/auth_num.csv").readlines()[:11]
-list_of_auth = []
-for l in list_of_auth_temp :
-    list_of_auth.append(l.split(';')[0])
+#list_of_galleries = open("data/galleries_cleaned_no_webtoon_no_incomplete.csv").readlines()[:11]
+#list_of_auth_temp = open("data/auth_num.csv").readlines()[:11]
+#list_of_auth = []
+#for l in list_of_auth_temp :
+#    list_of_auth.append(l.split(';')[0])
+list_of_galleries = ["2;55;('kitoen', 'heizo');('big-breasts', 'schoolgirl-uniform', 'rape')",
+                     "39;20;('yuuki-alice',);('group', 'lolicon', 'rape', 'ffm-threesome', 'dilf')",
+                     "63;34;('kuro-tengu',);('schoolgirl-uniform', 'mosaic-censorship', 'schoolboy-uniform', 'condom')",
+                     "83;35;('syouji',);('lolicon', 'anal', 'schoolgirl-uniform', 'small-breasts')",
+                     "87;24;('saigado',);('schoolgirl-uniform', 'shotacon', 'ishoku-dougen')",
+                     "101;30;('manabe-jouji',);('sole-female', 'sole-male', 'schoolboy-uniform', 'big-ass', 'bodysuit', 'facesitting')"]
 
+list_of_auth = ["kitoen","heizo","yuuki-alice","kuro-tengu","syouji","saigado","manabe-jouji"]
 gal_class = dict()
 auth_class = {a:Auth(a) for a in list_of_auth}
 
