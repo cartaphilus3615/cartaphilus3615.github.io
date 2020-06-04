@@ -249,7 +249,7 @@ for gal in gal_class.values() :
                 except :
                     auth_class[auteur].tags[t] = 1
         except :
-            print(gal.auth)
+            raise ValueError#print(gal.auth)
 
 for a in auth_class.values() :
     a.update_ratios()
