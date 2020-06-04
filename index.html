@@ -65,9 +65,9 @@ class Auth :
     
     def update_ratios(self) :
         tot = len(self.galleries)
-        if tot==0 :
-          print(self.name)
-          tot=1
+        #if tot==0 :
+        #  print(self.name)
+        #  tot=1
         self.tags_ratios = {t:round(100*v/tot,2) for t,v in self.tags.items()}
         self.gal_densities = [gal_class[str(g)].density for g in self.galleries]
         self.avg_density = int(100000*(sum(self.gal_densities)/tot))/100000.0
