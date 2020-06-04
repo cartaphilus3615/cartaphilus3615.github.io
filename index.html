@@ -14,7 +14,7 @@
 <body onload="brython()">
 
 <script type="text/python">
-from browser import document, alert, worker
+from browser import bind, document, alert, worker
 from browser.widgets.dialog import InfoDialog
 import math as m
 import random as rd
@@ -229,8 +229,15 @@ def search(aut) :
 #                     "101;30;('manabe-jouji',);('sole-female', 'sole-male', 'schoolboy-uniform', 'big-ass', 'bodysuit', 'facesitting')"]
 
 #list_of_auth = ["kitoen","heizo","yuuki-alice","kuro-tengu","syouji","saigado","manabe-jouji"]
-</script>
-<script type="text/python" class="webworker" id="myworker">
+aut_gal = worker.Worker("importator")
+#@bind(aut_gal,"message")
+#def message(e) :
+  
+  </script>
+  
+<script type="text/python" class="webworker" id="importator">
+from browser import bind, document, alert, self
+#@bind(self,"message")
 gal_class = dict()
 auth_class = dict()
 print("Importing galleries...")
