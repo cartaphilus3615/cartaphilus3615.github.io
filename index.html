@@ -16,6 +16,256 @@
 <script type="text/python">
 from browser import document, alert
 from browser.widgets.dialog import InfoDialog
+import math as m
+import random as rd
+
+non_H_tags = ['full-color','multi-work-series','full-censorship','mosaic-censorship','tankoubon','uncensored','story-arc','non-h','anthology',
+              'forbidden-content','out-of-order','watermarked','artistcg','missing-cover','western-non-h']
+
+
+
+
+
+class Gallery :
+    def __init__(self,line_gal) :
+        line_split = line_gal.split(";")
+        
+        self.id = int(line_split[0])
+        self.n_pages = int(line_split[1])
+        
+        # self.auth = list(literal_eval(line_split[2]))
+        # self.tags_all = list(literal_eval(line_split[3]))
+        self.auth = [a.strip().strip("'") for a in line_split[2][1:-1].split(',')]
+        try :
+            self.auth.remove('')
+        except :
+            pass
+        self.tags_all = [a.strip().strip("'") for a in line_split[3][1:-1].split(',')]
+        # self.tags_all.remove('')
+        self.tags = []
+        self.nonHtags = []
+        for t in self.tags_all :
+            if t in non_H_tags :
+                self.nonHtags.append(t)
+            else :
+                self.tags.append(t)
+        
+        self.n_tags = len(self.tags)
+        self.n_auth = len(self.auth)
+        
+        self.density = int(1000*self.n_tags/self.n_pages)/1000.0
+        
+    
+    
+class Auth :
+    def __init__(self, a) :
+        self.name = a
+        self.tags = dict()
+        self.galleries = []
+    
+    def update_ratios(self) :
+        tot = len(self.galleries)
+        self.tags_ratios = {t:round(100*v/tot,2) for t,v in self.tags.items()}
+        self.gal_densities = [gal_class[str(g)].density for g in self.galleries]
+        self.avg_density = int(100000*(sum(self.gal_densities)/tot))/100000.0
+        # self.tags = dict(sorted(self.tags.items(), key=lambda kv: kv[1], reverse=True))
+
+def dist_gallery(gal_1,gal_2) :
+    return gal_1.n_tags+gal_2.n_tags-2*len(set(gal_1.tags).intersection(gal_2.tags))
+    
+    
+
+def closest_gallery(gal) :
+    distance = []
+    for galler in gal_class.values() :
+        if galler.id == gal.id :
+            continue
+        distance.append([galler.id,dist_gallery(gal,galler)])
+    distance.sort(key=lambda x: x[1])
+    return distance
+
+
+def dist_auth(auth_1,auth_2) :
+    distance = {k: (auth_1.tags_ratios.get(k, 0) - auth_2.tags_ratios.get(k, 0))**2 for k in set(auth_1.tags_ratios) | set(auth_2.tags_ratios)}
+    return int(1000*m.sqrt(sum(distance.values())))/1000.0
+    
+def closest_auth(auteur) :
+    distance = []
+    for aut in auth_class.values() :
+        if aut.name == auteur.name :
+            continue
+        distance.append([aut.name,dist_auth(auteur,aut)])
+    distance.sort(key=lambda x: x[1])
+    return [d[:2] for d in distance]
+    
+def sim_densities(auteur) :
+    distance = []
+    for aut in auth_class.values() :
+        if aut.name == auteur.name :
+            continue
+        distance.append([aut.name,aut.avg_density,abs(auteur.avg_density-aut.avg_density)])
+    distance.sort(key=lambda x: x[2])
+    return [d[:2] for d in distance]
+
+
+    # print("Importing...")
+
+    # with open("galleries_cleaned_no_webtoon_no_incomplete.csv", 'r') as galleries_info :
+        # list_of_galleries = galleries_info.readlines()#[:11]
+
+    # with open("auth_num.csv", 'r') as auth_info :
+        # list_of_auth_temp = auth_info.readlines()#[:11]
+        # list_of_auth = []
+        # for l in list_of_auth_temp :
+            # list_of_auth.append(l.split(';')[0])
+        
+
+    # gal_class = dict()
+    # auth_class = {a:Auth(a) for a in list_of_auth}
+
+    # for g in list_of_galleries :
+        # gal_class[g.split(';')[0]] = Gallery(g)
+        
+    # for gal in gal_class.values() :
+        # for auteur in gal.auth :
+            # auth_class[auteur].galleries.append(gal.id)
+            # for t in gal.tags :
+                # try :
+                    # auth_class[auteur].tags[t] += 1
+                # except :
+                    # auth_class[auteur].tags[t] = 1
+
+    # for a in auth_class.values() :
+        # a.update_ratios()
+    
+
+
+def search(aut) :
+    # close = closest_auth(auth_class[aut])
+    # print(aut,"0.000",sorted(auth_class[aut].tags_ratios.items(), key=lambda kv: kv[1], reverse=True)[:5])
+    # for a in close[:6] :
+        # print("")
+        # print(a[0],a[1],sorted(auth_class[a[0]].tags_ratios.items(), key=lambda kv: kv[1], reverse=True)[:5])
+    try :
+        isrand = "You like"
+        forwhom = "meaning you"
+        if aut == 'quit' or aut == '':
+            quit()
+        elif aut == 'rand' :
+            aut = rd.choice(list(auth_class.keys()))
+            isrand = "I chose"
+            forwhom = "for people who"
+        result_str = []
+        # start1 = time.time()
+        close = closest_auth(auth_class[aut])
+        # print("")
+        tags_total = sorted(auth_class[aut].tags_ratios.items(), key=lambda kv: kv[1], reverse=True)
+        tags = tags_total[:3]
+        # print("You like {}, meaning you appreciate hentai with healthy dose of {}, a touch of {} and a hint of {}.".format(aut,tags[0][0],tags[1][0],tags[2][0]))
+        # print("")
+        # print("Here are five other artists you might enjoy :")
+        if len(tags)>=3 :
+            result_str.append("{} {}, {} appreciate hentai with a\nhealthy dose of {}, a touch of {} and a hint of {}.".format(isrand,aut,forwhom,tags[0][0],tags[1][0],tags[2][0]))
+            if len(tags_total)==3 :
+                result_str.append("!! These are the only tags I could find, recommendations probably innacurate !!")
+            result_str.append("")
+            result_str.append("Here are five other artists you might enjoy :")
+        elif len(tags)==2 :
+            result_str.append("{} {}, {} appreciate hentai with a\nhealthy dose of {} and a touch of {}.".format(isrand,aut,forwhom,tags[0][0],tags[1][0]))
+            result_str.append("!! These are the only tags I could find, recommendations probably innacurate !!")
+            result_str.append("")
+            result_str.append("Here are five other artists you might enjoy :")
+        elif len(tags)==1 :
+            result_str.append("{} {}, {} appreciate hentai with a\nhealthy dose of {}.".format(isrand,aut,forwhom,tags[0][0]))
+            result_str.append("!! These are the only tags I could find, recommendations probably innacurate !!")
+            result_str.append("")
+            result_str.append("Here are five other artists you might enjoy :")
+        else :
+            result_str.append("{} {}, but I couldn't find any tags associated with them.".format(isrand,aut))
+            result_str.append("")
+            result_str.append("Here are five random artists instead:")
+            result_str.extend(rd.sample(list(auth_class.keys()),5))
+            return "\n".join(result_str)
+
+        for a in close[:5] :
+            # print(a[0])
+            result_str.append(a[0])
+            # print(a[0],a[1],sorted(auth_class[a[0]].tags_ratios.items(), key=lambda kv: kv[1], reverse=True)[:5])
+        # print(str(time.time()-start1))
+        # print('---------')
+        return "\n".join(result_str)
+    except KeyError :
+        # print("Unknown artist : {}".format(aut))
+        return "Unknown artist : {}".format(aut)
+    # print('---------')
+
+#def returnEntry(window,content,resultLabel):
+#    resultLabel.config(text=content)
+
+#def affiche(arg=None) :
+#        returnEntry(master,search(e1.get()),affichage)
+
+if __name__ == "__main__":
+    # print("Importing...")
+
+    with open("data/galleries_cleaned_no_webtoon_no_incomplete.csv", 'r') as galleries_info :
+        list_of_galleries = galleries_info.readlines()#[:11]
+
+    with open("data/auth_num.csv", 'r') as auth_info :
+        list_of_auth_temp = auth_info.readlines()#[:11]
+        list_of_auth = []
+        for l in list_of_auth_temp :
+            list_of_auth.append(l.split(';')[0])
+        
+
+    gal_class = dict()
+    auth_class = {a:Auth(a) for a in list_of_auth}
+
+    for g in list_of_galleries :
+        gal_class[g.split(';')[0]] = Gallery(g)
+        
+    for gal in gal_class.values() :
+        for auteur in gal.auth :
+            try :
+                auth_class[auteur].galleries.append(gal.id)
+                for t in gal.tags :
+                    try :
+                        auth_class[auteur].tags[t] += 1
+                    except :
+                        auth_class[auteur].tags[t] = 1
+            except :
+                print(gal.auth)
+
+    for a in auth_class.values() :
+        a.update_ratios()
+    # print("Done !")
+    
+    #master = tk.Tk()
+    #master.title("Nhentai recommendator")
+    #master.minsize(400,250)
+    #master.grid_columnconfigure(0, weight=5)
+    # master.grid_columnconfigure(1, weight=1)
+    #master.grid_columnconfigure(2, weight=5)
+    #to = tk.Label(master, text="One artist you like (or rand for random)")
+    #to.grid(row=0, column=1)
+    
+    #e1 = tk.Entry(master)
+    #e1.grid(row=1, column=1)
+    #e1.bind("<Return>", affiche)
+    
+    
+    
+    #affichage = tk.Label(master, text = "")
+    #affichage.grid(row=3, column=1)
+
+    # qui = tk.Button(master, text='Quit', command=master.quit)
+    # qui.grid(row=2, column=1)
+    
+    #sim = tk.Button(master, text='Search', command=affiche)
+    #sim.grid(row=2, column=1)
+    
+    #e1.focus_set()
+    #master.mainloop()
 
 def echo(ev):
     InfoDialog("Hello", f"Hello {document['zone'].value} !")
