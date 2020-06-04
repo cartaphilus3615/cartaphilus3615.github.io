@@ -205,67 +205,72 @@ def search(aut) :
 #def affiche(arg=None) :
 #        returnEntry(master,search(e1.get()),affichage)
 
-if __name__ == "__main__":
-    # print("Importing...")
 
-    with open("data/galleries_cleaned_no_webtoon_no_incomplete.csv", 'r') as galleries_info :
-        list_of_galleries = galleries_info.readlines()#[:11]
+# print("Importing...")
 
-    with open("data/auth_num.csv", 'r') as auth_info :
-        list_of_auth_temp = auth_info.readlines()#[:11]
-        list_of_auth = []
-        for l in list_of_auth_temp :
-            list_of_auth.append(l.split(';')[0])
-        
+#with open("data/galleries_cleaned_no_webtoon_no_incomplete.csv", 'r') as galleries_info :
+#    list_of_galleries = galleries_info.readlines()
 
-    gal_class = dict()
-    auth_class = {a:Auth(a) for a in list_of_auth}
+#with open("data/auth_num.csv", 'r') as auth_info :
+#    list_of_auth_temp = auth_info.readlines()
+#    list_of_auth = []
+#    for l in list_of_auth_temp :
+#        list_of_auth.append(l.split(';')[0])
 
-    for g in list_of_galleries :
-        gal_class[g.split(';')[0]] = Gallery(g)
-        
-    for gal in gal_class.values() :
-        for auteur in gal.auth :
-            try :
-                auth_class[auteur].galleries.append(gal.id)
-                for t in gal.tags :
-                    try :
-                        auth_class[auteur].tags[t] += 1
-                    except :
-                        auth_class[auteur].tags[t] = 1
-            except :
-                print(gal.auth)
+list_of_galleries = open("data/galleries_cleaned_no_webtoon_no_incomplete.csv").readlines()[:11]
+list_of_auth_temp = open("data/auth_num.csv").readlines()[:11]
+list_of_auth = []
+for l in list_of_auth_temp :
+    list_of_auth.append(l.split(';')[0])
 
-    for a in auth_class.values() :
-        a.update_ratios()
-    # print("Done !")
-    
-    #master = tk.Tk()
-    #master.title("Nhentai recommendator")
-    #master.minsize(400,250)
-    #master.grid_columnconfigure(0, weight=5)
-    # master.grid_columnconfigure(1, weight=1)
-    #master.grid_columnconfigure(2, weight=5)
-    #to = tk.Label(master, text="One artist you like (or rand for random)")
-    #to.grid(row=0, column=1)
-    
-    #e1 = tk.Entry(master)
-    #e1.grid(row=1, column=1)
-    #e1.bind("<Return>", affiche)
-    
-    
-    
-    #affichage = tk.Label(master, text = "")
-    #affichage.grid(row=3, column=1)
+gal_class = dict()
+auth_class = {a:Auth(a) for a in list_of_auth}
 
-    # qui = tk.Button(master, text='Quit', command=master.quit)
-    # qui.grid(row=2, column=1)
-    
-    #sim = tk.Button(master, text='Search', command=affiche)
-    #sim.grid(row=2, column=1)
-    
-    #e1.focus_set()
-    #master.mainloop()
+for g in list_of_galleries :
+    gal_class[g.split(';')[0]] = Gallery(g)
+
+for gal in gal_class.values() :
+    for auteur in gal.auth :
+        try :
+            auth_class[auteur].galleries.append(gal.id)
+            for t in gal.tags :
+                try :
+                    auth_class[auteur].tags[t] += 1
+                except :
+                    auth_class[auteur].tags[t] = 1
+        except :
+            print(gal.auth)
+
+for a in auth_class.values() :
+    a.update_ratios()
+# print("Done !")
+
+#master = tk.Tk()
+#master.title("Nhentai recommendator")
+#master.minsize(400,250)
+#master.grid_columnconfigure(0, weight=5)
+# master.grid_columnconfigure(1, weight=1)
+#master.grid_columnconfigure(2, weight=5)
+#to = tk.Label(master, text="One artist you like (or rand for random)")
+#to.grid(row=0, column=1)
+
+#e1 = tk.Entry(master)
+#e1.grid(row=1, column=1)
+#e1.bind("<Return>", affiche)
+
+
+
+#affichage = tk.Label(master, text = "")
+#affichage.grid(row=3, column=1)
+
+# qui = tk.Button(master, text='Quit', command=master.quit)
+# qui.grid(row=2, column=1)
+
+#sim = tk.Button(master, text='Search', command=affiche)
+#sim.grid(row=2, column=1)
+
+#e1.focus_set()
+#master.mainloop()
 
 def echo(ev):
     InfoDialog("Hello", f"Hello {document['zone'].value} !")
